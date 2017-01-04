@@ -6,11 +6,21 @@ def readme():
 
 
 setup(name = 'fuzzy_dempster_shafer',
-    version = '0.01',
+    version = '0.1',
     description = 'Prediction algorithm based in Dempster-Shafer Fuzzy Logic and Bayesian principles',
-    classifiers = ['Programming Language :: Python :: 3.5']
+    long_description = 'This is an ongoing project to creating a machine learning classification package. \
+    The highlight of this package will be the utilization of Dempster-Shafer theory to improve on classifications \
+    from other methods such as logistic regression.',
+    classifiers = ['Programming Language :: Python :: 3.5'],
     url = 'https://github.com/phystistics/fuzzy_dempster_shafer',
+    test_suite = 'nose.collector',
+    tests_require = ['nose'],
     author = 'Austin Powell',
     author_email = 'powellaus10@gmail.com',
     license = 'MIT',
+    install_requires = [
+        'pandas',
+        'numpy',
+        'sklearn'
+    ],
     zip_safe = False)
