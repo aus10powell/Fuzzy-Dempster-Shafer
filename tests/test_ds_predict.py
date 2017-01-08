@@ -16,6 +16,11 @@
 ## Dependencies
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
+
+# temporary files for testing
+from test_mass_comb_fxn import *
+# temporary files for testing
+
 import pandas as pd
 import numpy as np
 
@@ -95,22 +100,47 @@ def predict(train_object, X_test,
                 mass_1[j] = mass_min0[j] 
                 mass_0[j] = mass_min1[j]
     
-    # Create belief/unbelief/uncertainty values
-    ## R-code
-    # for(j in 1:ncol(newdata)){
-    #masses[[j]] <- mass(list("0"=mass_0[i,j], "1"=mass_1[i,j], "0/1"=mass_0and1[i,j]), stateSpace) 
-    #}
-    # mass_combo = mComb(masses, list("0" = 1-probabilities[i], "1" = probabilities[i]))
+
+    # Initialize vectors for holding the classifications made by D-S theory
+    ## belief and belief0 are beliefs in 1 and 0 respectively
+    LR_plus_DS_probs = LR_plus_DS_classi  = \
+    belief = belief0 = \
+    lower_bound_1 = lower_bound_0 = upper_bound_1 = upper_bound_0 = \
+    uncertain = disbelief = \
+    np.zeros(X_test.shape[0])
+
     
     for i in range(X_test.shape[0]):
         masses = []
         for j in range(X_test.shape[1]):
-            masses.append([mass_0.iloc[i][j],mass_1.iloc[i][j],mass_0and1.iloc[i][j]])
-    ## commenting out until I can figure why masses aren't working
-    mass_combo = massComb(masses,prior0 = (1 - probabilities), prior1 = probabilities, prior01 = 0)
-    # mass_combo = massComb(masses, prior0 = (1 - probabilities), prior1 = probabilities, prior01=0) 
+            masses.append([mass_0.iloc[i][j], mass_1.iloc[i][j], mass_0and1.iloc[i][j]])
 
-    return(mass_combo)
+        mass_combo = massComb(masses, prior0 = (1 - probabilities[i]), prior1 = probabilities[i], prior01 = 0)
 
+        ###### MORE WORK TO BE DONE REFINING THIS SECTION
+        belief[i] = mass_combo['blf1']
+        uncertain[i] = mass_combo['blf01']
+        disbelief[i] = 1 - (mass_combo['blf1'] + mass_combo['blf01'])
+
+        belief0[i] = mass_combo['blf0']
+        ###### MORE WORK TO BE DONE REFINING THIS SECTION
+
+        # Calculating uncertain "confidence intervals". From most literature this should also include plausability of parameter space
+        # However, it does not appear that the mass_comb fxn currently supports probabilities that don't add to 1
+        lower_bound_1[i] = belief[i]
+        upper_bound_1[i] = belief[i] + uncertain[i]
+        lower_bound_0[i] = belief0[i]
+        upper_bound_0[i] = belief0[i] + uncertain[i]
+
+
+    #for i in range(X_test.shape[0]):
+
+
+
+    output_to_return = {"LR_Classifications": classifications, "LR_Probabilities": probabilities, "LR_plus_DS_Classifications": LR_plus_DS_classi, \
+                         "LR_plus_DS_Probabilities": LR_plus_DS_probs, "lower_bound_1": lower_bound_1, "upper_bound_1": upper_bound_1, \
+                         "lower_bound_0": lower_bound_0, "upper_bound_0": upper_bound_0}
+                         
+    return (output_to_return)
 
 
