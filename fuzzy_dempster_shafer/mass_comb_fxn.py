@@ -13,7 +13,7 @@ def safe_divide(numerator, denominator):
     if (denominator < 0) | (denominator == 0):
         return numerator
     else:
-        return numerator / denominator
+        return (numerator / denominator)
 
 
 # default prior values are uniform uninformative
@@ -67,7 +67,7 @@ def massComb(masses, prior0=0.5, prior1=0.5, prior01=0):
         m_theta = intrsxn_array[3][3] / (1 - K)
         print("Next mass assignment. m0:", m0, "m1: ", m1,
               "m01: ", m01, "m_theta: ", m_theta, "K: ", K)
-    ############### END: Combining all bpa's
+    ############### END: Combining all bpa's ###############################
 
     print("m0:", m0, "m1: ", m1, "m01: ",
           m01, "m_theta: ", m_theta, "K: ", K)
@@ -105,6 +105,10 @@ def massComb(masses, prior0=0.5, prior1=0.5, prior01=0):
     plsb1 = m1 + m01 + m_theta
     plsb_theta = 1
 
+    mass_fxn_values = {"blf0": blf0, "blf1": blf1, "blf01": blf01, \
+                        "plsb0": plsb0, "plsb1": plsb1, "plsb_theta": plsb_theta}
+
+    return (mass_fxn_values)
     # Range of Uncertainty
     #print("Range of uncertainty for case 0: ", "(", blf0, ",", plsb0, ")")
     #print("Range of uncertainty for case 1: ", "(", blf1, ",", plsb1, ")")

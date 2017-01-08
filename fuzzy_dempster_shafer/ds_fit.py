@@ -51,5 +51,5 @@ def fit(X_train,y_train, measure_belief=0.89, uncertainty=0.1,
     return df_mins_max, fitted_model
 
 
-	    
+      
 

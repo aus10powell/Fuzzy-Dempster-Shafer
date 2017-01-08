@@ -90,13 +90,13 @@ def predict(train_object, X_test,
             
             # Checking which mass values matrix is "benign" and which is "malignant"
             if train_object.ix[j,'lower_class'] == 0:
-                #mass_0.iloc[i][j] = mass_min0.iloc[i][j] # probably exactly the same
-                #mass_1.iloc[i][j] = mass_min1.iloc[i][j] # probably exactly the same
-                mass_0[j] = mass_min0[j] # old code, probably works though didn't make sure
-                mass_1[j] = mass_min1[j] # old code, probably works though didn't make sure
+                #mass_0.iloc[i][j] = mass_min0.iloc[i][j] 
+                #mass_1.iloc[i][j] = mass_min1.iloc[i][j] 
+                mass_0[j] = mass_min0[j] 
+                mass_1[j] = mass_min1[j] 
             else: 
-                #mass_0.iloc[i][j] = mass_min1.iloc[i][j]# probably exactly the same
-                #mass_1.iloc[i][j] = mass_min0.iloc[i][j]# probably exactly the same
+                #mass_0.iloc[i][j] = mass_min1.iloc[i][j]
+                #mass_1.iloc[i][j] = mass_min0.iloc[i][j]
                 mass_1[j] = mass_min0[j] 
                 mass_0[j] = mass_min1[j]
     
@@ -117,13 +117,10 @@ def predict(train_object, X_test,
 
         mass_combo = massComb(masses, prior0 = (1 - probabilities[i]), prior1 = probabilities[i], prior01 = 0)
 
-        ###### MORE WORK TO BE DONE REFINING THIS SECTION
-        belief[i] = mass_combo['blf1']
-        uncertain[i] = mass_combo['blf01']
-        disbelief[i] = 1 - (mass_combo['blf1'] + mass_combo['blf01'])
-
+        belief[i] = mass_combo['blf1'] # belief is a degree of evidence
         belief0[i] = mass_combo['blf0']
-        ###### MORE WORK TO BE DONE REFINING THIS SECTION
+        uncertain[i] = mass_combo['plsb1'] - mass_combo['blf1'] # uncertainty is the difference between plausability of a value of 1 and belief of a value of 1
+        disbelief[i] = 1 - (mass_combo['blf1'] + mass_combo['blf01']) # Disbelief is the compliment to plausability (something we don't condsider possbile)
 
         # Calculating uncertain "confidence intervals". From most literature this should also include plausability of parameter space
         # However, it does not appear that the mass_comb fxn currently supports probabilities that don't add to 1
@@ -133,14 +130,35 @@ def predict(train_object, X_test,
         upper_bound_0[i] = belief0[i] + uncertain[i]
 
 
-    #for i in range(X_test.shape[0]):
+    for i in range(X_test.shape[0]):
+        if (belief[i] > 0.5) and (classifications[i] == 1):
+            LR_plus_DS_probs[i] = probabilities[i] + belief_increase        
+            if LR_plus_DS_probs[i] > 1:
+                LR_plus_DS_probs[i] = 1
+        elif (belief[i] > 0.5) and (classifications[i] == 0):
+            LR_plus_DS_probs[i] = probabilities[i] + belief_increase
+            if LR_plus_DS_probs[i] > 1:
+                LR_plus_DS_probs[i] = 1
+        elif (disbelief[i] > 0.5) and (classifications[i] == 1):
+            LR_plus_DS_probs[i] = probabilities[i] - belief_decrease
+            if LR_plus_DS_probs[i] < 0:
+                LR_plus_DS_probs[i] = 0
+        elif (disbelief[i] > 0.5) and (classifications[i] == 0):
+            LR_plus_DS_probs[i] = probabilities[i] - belief_decrease
+            if LR_plus_DS_probs[i] < 0:
+                LR_plus_DS_probs[i] = 0
+        else:
+            LR_plus_DS_probs[i] = probabilities[i]
 
-
+        if LR_plus_DS_probs[i] > 0.5:
+            LR_plus_DS_classi[i] = 1
+        else:
+            LR_plus_DS_classi[i] = 0
 
     output_to_return = {"LR_Classifications": classifications, "LR_Probabilities": probabilities, "LR_plus_DS_Classifications": LR_plus_DS_classi, \
                          "LR_plus_DS_Probabilities": LR_plus_DS_probs, "lower_bound_1": lower_bound_1, "upper_bound_1": upper_bound_1, \
-                         "lower_bound_0": lower_bound_0, "upper_bound_0": upper_bound_0}
-                         
+                         "lower_bound_0": lower_bound_0, "upper_bound_0": upper_bound_0, "uncertain": uncertain}
+
     return (output_to_return)
 
 
