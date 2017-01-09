@@ -154,7 +154,7 @@ def predict(train_object, X_test,
 
     output_to_return = {"LR_Classifications": classifications, "LR_Probabilities": probabilities, "LR_plus_DS_Classifications": LR_plus_DS_classi, \
                          "LR_plus_DS_Probabilities": LR_plus_DS_probs, "lower_bound_1": lower_bound_1, "upper_bound_1": upper_bound_1, \
-                         "lower_bound_0": lower_bound_0, "upper_bound_0": upper_bound_0}
+                         "lower_bound_0": lower_bound_0, "upper_bound_0": upper_bound_0, "uncertain": uncertain}
 
     return (output_to_return)
 
