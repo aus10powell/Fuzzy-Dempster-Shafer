@@ -14,7 +14,7 @@ Dempster-Shafer theory in general attempts to consolidate evidence. It starts wi
 In practice, the algorithm is believed to improve (even if only marginally) the performance of classifications through other probabilities such as logistic regression. It can effectively be used on many different types of data, particularly images where evidence could theoretically be gathered to classify what the image is representing. 
 
 **Installation:**
-In progress
+Standard pip install (Python 3)
 
 **Current Effort:**
 Optimize parameters for belief increase or decrease using grid search. Later to be an optimized grid search.
