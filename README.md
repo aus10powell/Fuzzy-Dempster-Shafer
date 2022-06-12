@@ -6,7 +6,7 @@ This is an ongoing project to creating a machine learning classification package
 
 **Code Example:**
 * Train the model: assign subjective probabilites (masses) to all subsets of the data.
-* Predict the the data
+* Predict 
 
 **Motivation:**
 Dempster-Shafer theory in general attempts to consolidate evidence. It starts withe possibilities under consideration and partitions them into belief (strength of evidence) and plausibility (the set of all possible values including the evidence. 
